@@ -5,9 +5,12 @@ from pathlib import Path
 from typing import Dict
 
 import torch
+from torch.optim import Adam
+from torch.utils.data import DataLoader
 from tqdm import trange
 
 from dataset import SeqClsDataset
+from model import SeqClassifier
 from utils import Vocab
 
 TRAIN = "train"
@@ -28,17 +31,24 @@ def main(args):
         split: SeqClsDataset(split_data, vocab, intent2idx, args.max_len)
         for split, split_data in data.items()
     }
-    # TODO: crecate DataLoader for train / dev datasets
+    data_loaders: Dict[str, DataLoader] = {
+        split: DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
+        for split, dataset in datasets.items()
+    }
 
     embeddings = torch.load(args.cache_dir / "embeddings.pt")
-    # TODO: init model and move model to target device(cpu / gpu)
-    model = None
+    num_class = len(intent2idx)
+    target_device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = SeqClassifier(embeddings, args.hidden_size, args.num_layers, args.dropout,
+                          args.bidirectional, num_class).to(target_device)
 
-    # TODO: init optimizer
-    optimizer = None
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+
+    loss = torch.nn.CrossEntropyLoss()
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
+        # todo Pad samples to the same length. here or what?
         # TODO: Training loop - iterate over train dataloader and update model weights
         # TODO: Evaluation loop - calculate accuracy and save model weights
         pass
