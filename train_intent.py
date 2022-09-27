@@ -11,7 +11,7 @@ from tqdm import trange
 
 from dataset import SeqClsDataset
 from model import SeqClassifier
-from utils import Vocab
+from utils import Vocab, max_index
 
 TRAIN = "train"
 DEV = "eval"
@@ -29,8 +29,16 @@ def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab, 
         print("loss: %d", current_loss.item())
 
 
-def test(model, data_loader, loss_function):
-    pass
+def test(model, data_loader, loss_function, vocab: Vocab, max_len):
+    # TODO: save model weights
+    all_samples_no = len(data_loader.dataset)
+    correct = 0
+    with torch.no_grad():
+        for batch, ys in data_loader:
+            encoded_batch = vocab.encode_batch(batch, max_len)
+            predictions = model(encoded_batch)
+            correct += len([i for i in range(len(batch)) if max_index(predictions[i]) == ys[i]])
+    print("correct: %d out of %d. Epoch ended", correct, all_samples_no)
 
 
 def main(args):
@@ -59,12 +67,12 @@ def main(args):
 
     optimizer = SGD(model.parameters(), lr=args.learning_rate)
 
-    loss_function = torch.nn.CrossEntropyLoss()
+    loss_function = torch.nn.CrossEntropyLoss()  # todo zobaczymy czy to działa do multiclass classification
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
         train_iteration(model, data_loaders[TRAIN], loss_function, optimizer, vocab, args.max_len)
-        test(model, data_loaders[DEV], loss_function)
+        test(model, data_loaders[DEV], loss_function, vocab, args.max_len)
 
     # TODO: Inference on test set
 
