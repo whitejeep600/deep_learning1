@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict
 
 import torch
-from torch.optim import Adam
+from torch.optim import SGD
 from torch.utils.data import DataLoader
 from tqdm import trange
 
@@ -16,6 +16,21 @@ from utils import Vocab
 TRAIN = "train"
 DEV = "eval"
 SPLITS = [TRAIN, DEV]
+
+
+def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab, max_len):
+    for batch, ys in data_loader:
+        encoded_batch = vocab.encode_batch(batch, max_len)
+        predictions = model(encoded_batch)
+        current_loss = loss_function(predictions, ys)
+        optimizer.zero_grad()
+        current_loss.backward()
+        optimizer.step()
+        print("loss: %d", current_loss.item())
+
+
+def test(model, data_loader, loss_function):
+    pass
 
 
 def main(args):
@@ -42,16 +57,14 @@ def main(args):
     model = SeqClassifier(embeddings, args.hidden_size, args.num_layers, args.dropout,
                           args.bidirectional, num_class).to(target_device)
 
-    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    optimizer = SGD(model.parameters(), lr=args.learning_rate)
 
-    loss = torch.nn.CrossEntropyLoss()
+    loss_function = torch.nn.CrossEntropyLoss()
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
-        # todo Pad samples to the same length. here or what?
-        # TODO: Training loop - iterate over train dataloader and update model weights
-        # TODO: Evaluation loop - calculate accuracy and save model weights
-        pass
+        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer, vocab, args.max_len)
+        test(model, data_loaders[DEV], loss_function)
 
     # TODO: Inference on test set
 
