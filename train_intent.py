@@ -19,14 +19,18 @@ SPLITS = [TRAIN, DEV]
 
 
 def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab, max_len):
-    for batch, ys in data_loader:
-        encoded_batch = vocab.encode_batch(batch, max_len)
-        predictions = model(encoded_batch)
-        current_loss = loss_function(predictions, ys)
+    for batch in iter(data_loader):
+        sentences = batch['text']
+        intents = batch['intent']
+        encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences], max_len)
+        labels = torch.LongTensor([data_loader.dataset.label_mapping[intent] for intent in intents])
+        sentences_tensor = torch.IntTensor(encoded_sentences)
+        predictions = model(sentences_tensor)['prediction']
+        current_loss = loss_function(predictions, labels)
         optimizer.zero_grad()
         current_loss.backward()
         optimizer.step()
-        print("loss: %d", current_loss.item())
+        print("loss: ", current_loss.item())
 
 
 def test(model, data_loader, loss_function, vocab: Vocab, max_len):
@@ -34,10 +38,14 @@ def test(model, data_loader, loss_function, vocab: Vocab, max_len):
     all_samples_no = len(data_loader.dataset)
     correct = 0
     with torch.no_grad():
-        for batch, ys in data_loader:
-            encoded_batch = vocab.encode_batch(batch, max_len)
-            predictions = model(encoded_batch)
-            correct += len([i for i in range(len(batch)) if max_index(predictions[i]) == ys[i]])
+        for batch in iter(data_loader):
+            sentences = batch['text']
+            intents = batch['intent']
+            encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences], max_len)
+            sentences_tensor = torch.IntTensor(encoded_sentences)
+            labels = torch.LongTensor([data_loader.dataset.label_mapping[intent] for intent in intents])
+            predictions = model(sentences_tensor)['prediction']
+            correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == labels[i]])
     print("correct: %d out of %d. Epoch ended", correct, all_samples_no)
 
 
@@ -65,15 +73,14 @@ def main(args):
     model = SeqClassifier(embeddings, args.hidden_size, args.num_layers, args.dropout,
                           args.bidirectional, num_class).to(target_device)
 
-    optimizer = SGD(model.parameters(), lr=args.learning_rate)
+    optimizer = SGD(model.parameters(), lr=args.lr)
 
-    loss_function = torch.nn.CrossEntropyLoss()  # todo zobaczymy czy to działa do multiclass classification
+    loss_function = torch.nn.CrossEntropyLoss()
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
         train_iteration(model, data_loaders[TRAIN], loss_function, optimizer, vocab, args.max_len)
         test(model, data_loaders[DEV], loss_function, vocab, args.max_len)
-
     # TODO: Inference on test set
 
 
@@ -117,7 +124,7 @@ def parse_args() -> Namespace:
     parser.add_argument(
         "--device", type=torch.device, help="cpu, cuda, cuda:0, cuda:1", default="cpu"
     )
-    parser.add_argument("--num_epoch", type=int, default=100)
+    parser.add_argument("--num_epoch", type=int, default=10)
 
     args = parser.parse_args()
     return args
