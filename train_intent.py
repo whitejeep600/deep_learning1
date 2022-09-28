@@ -20,7 +20,7 @@ SPLITS = [TRAIN, DEV]
 
 def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab):
     model.train()
-    for batch in iter(data_loader):
+    for i, batch in enumerate(data_loader):
         sentences = batch['text']
         intents = batch['intent']
         encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences])
@@ -31,7 +31,8 @@ def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab):
         optimizer.zero_grad()
         current_loss.backward()
         optimizer.step()
-        print("loss: ", current_loss.item())
+        if i % 20 == 0:
+            print("loss: ", current_loss.item())
 
 
 def test(model, data_loader, loss_function, vocab: Vocab):
@@ -119,16 +120,16 @@ def parse_args() -> Namespace:
     parser.add_argument("--bidirectional", type=bool, default=True)
 
     # optimizer
-    parser.add_argument("--lr", type=float, default=1e-2)
+    parser.add_argument("--lr", type=float, default=5e-2)
 
     # data loader
-    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument("--batch_size", type=int, default=128)
 
     # training
     parser.add_argument(
         "--device", type=torch.device, help="cpu, cuda, cuda:0, cuda:1", default="cpu"
     )
-    parser.add_argument("--num_epoch", type=int, default=10)
+    parser.add_argument("--num_epoch", type=int, default=100)
 
     args = parser.parse_args()
     return args
