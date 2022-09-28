@@ -18,11 +18,12 @@ DEV = "eval"
 SPLITS = [TRAIN, DEV]
 
 
-def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab, max_len):
+def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab):
+    model.train()
     for batch in iter(data_loader):
         sentences = batch['text']
         intents = batch['intent']
-        encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences], max_len)
+        encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences])
         labels = torch.LongTensor([data_loader.dataset.label_mapping[intent] for intent in intents])
         sentences_tensor = torch.IntTensor(encoded_sentences)
         predictions = model(sentences_tensor)['prediction']
@@ -33,20 +34,21 @@ def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab, 
         print("loss: ", current_loss.item())
 
 
-def test(model, data_loader, loss_function, vocab: Vocab, max_len):
+def test(model, data_loader, loss_function, vocab: Vocab):
     # TODO: save model weights
     all_samples_no = len(data_loader.dataset)
+    model.eval()
     correct = 0
     with torch.no_grad():
         for batch in iter(data_loader):
             sentences = batch['text']
             intents = batch['intent']
-            encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences], max_len)
+            encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences])
             sentences_tensor = torch.IntTensor(encoded_sentences)
             labels = torch.LongTensor([data_loader.dataset.label_mapping[intent] for intent in intents])
             predictions = model(sentences_tensor)['prediction']
             correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == labels[i]])
-    print("correct: %d out of %d. Epoch ended", correct, all_samples_no)
+    print('correct: ', correct, ' out of ', all_samples_no, '. Epoch ended')
 
 
 def main(args):
@@ -70,17 +72,19 @@ def main(args):
     embeddings = torch.load(args.cache_dir / "embeddings.pt")
     num_class = len(intent2idx)
     target_device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = SeqClassifier(embeddings, args.hidden_size, args.num_layers, args.dropout,
-                          args.bidirectional, num_class).to(target_device)
+    model_no_device = SeqClassifier(embeddings, args.hidden_size, args.num_layers, args.dropout,
+                          args.bidirectional, num_class)
 
+    model = model_no_device.to(target_device)
+    print(model)
     optimizer = SGD(model.parameters(), lr=args.lr)
 
     loss_function = torch.nn.CrossEntropyLoss()
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
-        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer, vocab, args.max_len)
-        test(model, data_loaders[DEV], loss_function, vocab, args.max_len)
+        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer, vocab)
+        test(model, data_loaders[DEV], loss_function, vocab)
     # TODO: Inference on test set
 
 
@@ -109,16 +113,16 @@ def parse_args() -> Namespace:
     parser.add_argument("--max_len", type=int, default=128)
 
     # model
-    parser.add_argument("--hidden_size", type=int, default=512)
-    parser.add_argument("--num_layers", type=int, default=2)
+    parser.add_argument("--hidden_size", type=int, default=256)
+    parser.add_argument("--num_layers", type=int, default=1)
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--bidirectional", type=bool, default=True)
 
     # optimizer
-    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--lr", type=float, default=1e-2)
 
     # data loader
-    parser.add_argument("--batch_size", type=int, default=128)
+    parser.add_argument("--batch_size", type=int, default=64)
 
     # training
     parser.add_argument(
