@@ -11,7 +11,7 @@ from tqdm import trange
 
 from dataset import SeqClsDataset
 from model import SeqClassifier
-from utils import Vocab, max_index
+from utils import Vocab
 
 TRAIN = "train"
 DEV = "eval"
@@ -31,7 +31,7 @@ def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab):
         optimizer.zero_grad()
         current_loss.backward()
         optimizer.step()
-        if i % 20 == 0:
+        if i % 32 == 0:
             print("loss: ", current_loss.item())
 
 
@@ -74,7 +74,7 @@ def main(args):
     num_class = len(intent2idx)
     target_device = "cuda" if torch.cuda.is_available() else "cpu"
     model_no_device = SeqClassifier(embeddings, args.hidden_size, args.num_layers, args.dropout,
-                          args.bidirectional, num_class)
+                                    args.bidirectional, num_class)
 
     model = model_no_device.to(target_device)
     print(model)
