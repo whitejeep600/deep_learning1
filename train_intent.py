@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict
 
 import torch
+from torch import IntTensor, LongTensor
 from torch.optim import SGD
 from torch.utils.data import DataLoader
 from tqdm import trange
@@ -18,16 +19,13 @@ DEV = "eval"
 SPLITS = [TRAIN, DEV]
 
 
-def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab):
+def train_iteration(model, data_loader, loss_function, optimizer):
     model.train()
     for i, batch in enumerate(data_loader):
-        sentences = batch['text']
-        intents = batch['intent']
-        encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences])
-        labels = torch.LongTensor([data_loader.dataset.label_mapping[intent] for intent in intents])
-        sentences_tensor = torch.IntTensor(encoded_sentences)
-        predictions = model(sentences_tensor)['prediction']
-        current_loss = loss_function(predictions, labels)
+        sentences: IntTensor = batch['text']
+        intents: LongTensor = batch['intent']
+        predictions = model(sentences)['prediction']
+        current_loss = loss_function(predictions, intents)
         optimizer.zero_grad()
         current_loss.backward()
         optimizer.step()
@@ -35,7 +33,7 @@ def train_iteration(model, data_loader, loss_function, optimizer, vocab: Vocab):
             print("loss: ", current_loss.item())
 
 
-def test(model, data_loader, loss_function, vocab: Vocab):
+def test(model, data_loader):
     # TODO: save model weights
     all_samples_no = len(data_loader.dataset)
     model.eval()
@@ -44,11 +42,8 @@ def test(model, data_loader, loss_function, vocab: Vocab):
         for batch in iter(data_loader):
             sentences = batch['text']
             intents = batch['intent']
-            encoded_sentences = vocab.encode_batch([sentence.split(' ') for sentence in sentences])
-            sentences_tensor = torch.IntTensor(encoded_sentences)
-            labels = torch.LongTensor([data_loader.dataset.label_mapping[intent] for intent in intents])
-            predictions = model(sentences_tensor)['prediction']
-            correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == labels[i]])
+            predictions = model(sentences)['prediction']
+            correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == intents[i]])
     print('correct: ', correct, ' out of ', all_samples_no, '. Epoch ended')
 
 
@@ -66,7 +61,7 @@ def main(args):
         for split, split_data in data.items()
     }
     data_loaders: Dict[str, DataLoader] = {
-        split: DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
+        split: DataLoader(dataset, batch_size=args.batch_size, shuffle=True, collate_fn=dataset.collate_fn)
         for split, dataset in datasets.items()
     }
 
@@ -84,8 +79,8 @@ def main(args):
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
-        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer, vocab)
-        test(model, data_loaders[DEV], loss_function, vocab)
+        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer)
+        test(model, data_loaders[DEV])
     # TODO: Inference on test set
 
 

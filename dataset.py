@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+import torch
 from torch.utils.data import Dataset
 
 from utils import Vocab
@@ -31,8 +32,8 @@ class SeqClsDataset(Dataset):
         return len(self.label_mapping)
 
     def collate_fn(self, samples: List[Dict]) -> Dict:
-        # TODO: implement collate_fn
-        raise NotImplementedError
+        return {'text': torch.IntTensor(self.vocab.encode_batch([sample['text'].split(' ') for sample in samples])),
+                'intent': torch.LongTensor([self.label_mapping[sample['intent']] for sample in samples])}
 
     def label2idx(self, label: str):
         return self.label_mapping[label]
@@ -45,5 +46,7 @@ class SeqTaggingClsDataset(SeqClsDataset):
     ignore_idx = -100
 
     def collate_fn(self, samples):
-        # TODO: implement collate_fn
-        raise NotImplementedError
+        tagged_sentences = [sample['tags'] for sample in samples]
+        encoded_tags = [[self.label_mapping[tag] for tag in tagged_sentence] for tagged_sentence in tagged_sentences]
+        return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
+                'tag': torch.LongTensor(encoded_tags)}

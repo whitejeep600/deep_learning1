@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict
 
 import torch
+from torch import IntTensor
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from tqdm import tqdm, trange
@@ -16,6 +17,24 @@ from utils import Vocab
 TRAIN = "train"
 DEV = "eval"
 SPLITS = [TRAIN, DEV]
+
+
+def train_iteration(model, data_loader, loss_function, optimizer):
+    model.train()
+    for i, batch in enumerate(data_loader):
+        sentences: IntTensor = batch['text']
+        tags = batch['tag']
+        predictions = model(sentences)['prediction']
+        current_loss = loss_function(predictions, tags)
+        optimizer.zero_grad()
+        current_loss.backward()
+        optimizer.step()
+        if i % 32 == 0:
+            print("loss: ", current_loss.item())
+
+
+def test():
+    pass
 
 
 def main(args):
@@ -30,11 +49,26 @@ def main(args):
         split: SeqTaggingClsDataset(split_data, vocab, tag2idx, args.max_len)
         for split, split_data in data.items()
     }
-    # todo collate fn?
     data_loaders: Dict[str, DataLoader] = {
-        split: DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
+        split: DataLoader(dataset, batch_size=args.batch_size, shuffle=True, collate_fn=dataset.collate_fn)
         for split, dataset in datasets.items()
     }
+    embeddings = torch.load(args.cache_dir / "embeddings.pt")
+    num_class = len(tag2idx)  # todo 9
+    target_device = "cuda" if torch.cuda.is_available() else "cpu"
+    model_no_device = SeqTagger(embeddings, args.hidden_size, args.num_layers, args.dropout,
+                                args.bidirectional, num_class)
+
+    model = model_no_device.to(target_device)
+    print(model)
+    optimizer = Adam(model.parameters(), lr=args.lr)
+
+    loss_function = torch.nn.CrossEntropyLoss()
+
+    epoch_pbar = trange(args.num_epoch, desc="Epoch")
+    for epoch in epoch_pbar:
+        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer)
+        test(model, data_loaders[DEV], loss_function, vocab)
 
 
 def parse_args() -> Namespace:
