@@ -25,7 +25,10 @@ def train_iteration(model, data_loader, loss_function, optimizer):
         sentences: IntTensor = batch['text']
         tags = batch['tag']
         predictions = model(sentences)['prediction']
-        current_loss = loss_function(predictions, tags)
+        # todo nn.CrossEntrolyLoss expects a model output in the shape [batch_size, nb_classes, *additional_dims] and a
+        # target in the shape [batch_size, *additional_dims] containing the class indices in the range
+        # [0, nb_classes-1].
+        current_loss = loss_function(torch.transpose(predictions, 1, 2), tags)
         optimizer.zero_grad()
         current_loss.backward()
         optimizer.step()
@@ -68,7 +71,7 @@ def main(args):
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
     for epoch in epoch_pbar:
         train_iteration(model, data_loaders[TRAIN], loss_function, optimizer)
-        test(model, data_loaders[DEV], loss_function, vocab)
+        #test(model, data_loaders[DEV], loss_function, vocab)
 
 
 def parse_args() -> Namespace:

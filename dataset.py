@@ -3,7 +3,7 @@ from typing import List, Dict
 import torch
 from torch.utils.data import Dataset
 
-from utils import Vocab
+from utils import Vocab, pad_to_len
 
 
 class SeqClsDataset(Dataset):
@@ -48,5 +48,6 @@ class SeqTaggingClsDataset(SeqClsDataset):
     def collate_fn(self, samples):
         tagged_sentences = [sample['tags'] for sample in samples]
         encoded_tags = [[self.label_mapping[tag] for tag in tagged_sentence] for tagged_sentence in tagged_sentences]
+        padded_tags = pad_to_len(encoded_tags, max([len(tag) for tag in encoded_tags]), 0)
         return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
-                'tag': torch.LongTensor(encoded_tags)}
+                'tag': torch.LongTensor(padded_tags)}
