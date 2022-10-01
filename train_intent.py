@@ -30,7 +30,7 @@ def train_iteration(model, data_loader, loss_function, optimizer):
         current_loss.backward()
         optimizer.step()
         if i % 32 == 0:
-            print("loss: ", current_loss.item())
+            print(f'loss:{current_loss.item()}\n')
 
 
 def test(model, data_loader):
@@ -44,7 +44,7 @@ def test(model, data_loader):
             intents = batch['intent']
             predictions = model(sentences)['prediction']
             correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == intents[i]])
-    print('correct: ', correct, ' out of ', all_samples_no, '. Epoch ended')
+    print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
 
 
 def main(args):
@@ -72,7 +72,6 @@ def main(args):
                                     args.bidirectional, num_class)
 
     model = model_no_device.to(target_device)
-    print(model)
     optimizer = SGD(model.parameters(), lr=args.lr)
 
     loss_function = torch.nn.CrossEntropyLoss()

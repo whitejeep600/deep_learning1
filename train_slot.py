@@ -8,7 +8,7 @@ import torch
 from torch import IntTensor
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-from tqdm import tqdm, trange
+from tqdm import trange
 
 from dataset import SeqTaggingClsDataset
 from model import SeqTagger
@@ -24,20 +24,27 @@ def train_iteration(model, data_loader, loss_function, optimizer):
     for i, batch in enumerate(data_loader):
         sentences: IntTensor = batch['text']
         tags = batch['tag']
-        predictions = model(sentences)['prediction']
-        # todo nn.CrossEntrolyLoss expects a model output in the shape [batch_size, nb_classes, *additional_dims] and a
-        # target in the shape [batch_size, *additional_dims] containing the class indices in the range
-        # [0, nb_classes-1].
-        current_loss = loss_function(torch.transpose(predictions, 1, 2), tags)
+        predictions = torch.transpose(model(sentences)['prediction'], 1, 2)  # changing format for the loss function
+        current_loss = loss_function(predictions, tags)
         optimizer.zero_grad()
         current_loss.backward()
         optimizer.step()
         if i % 32 == 0:
-            print("loss: ", current_loss.item())
+            print(f'loss:{current_loss.item()}\n')
 
 
-def test():
-    pass
+def test(model, data_loader):
+    all_samples_no = len(data_loader.dataset)
+    model.eval()
+    correct = 0
+    with torch.no_grad():
+        for batch in iter(data_loader):
+            sentences: IntTensor = batch['text']
+            tags = batch['tag']
+            predictions = model(sentences)['prediction']
+            correct += len([i for i in range(len(predictions)) if
+                            all([torch.argmax(predictions[i][j]) == tags[i][j] for j in range(len(predictions[i]))])])
+        print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
 
 
 def main(args):
@@ -57,21 +64,20 @@ def main(args):
         for split, dataset in datasets.items()
     }
     embeddings = torch.load(args.cache_dir / "embeddings.pt")
-    num_class = len(tag2idx)  # todo 9
+    num_class = len(tag2idx)
     target_device = "cuda" if torch.cuda.is_available() else "cpu"
     model_no_device = SeqTagger(embeddings, args.hidden_size, args.num_layers, args.dropout,
                                 args.bidirectional, num_class)
 
     model = model_no_device.to(target_device)
-    print(model)
     optimizer = Adam(model.parameters(), lr=args.lr)
 
     loss_function = torch.nn.CrossEntropyLoss()
 
     epoch_pbar = trange(args.num_epoch, desc="Epoch")
-    for epoch in epoch_pbar:
+    for _ in epoch_pbar:
         train_iteration(model, data_loaders[TRAIN], loss_function, optimizer)
-        #test(model, data_loaders[DEV], loss_function, vocab)
+        test(model, data_loaders[DEV])
 
 
 def parse_args() -> Namespace:
