@@ -22,19 +22,9 @@ def main(args):
     dataset = SeqClsDataset(data, vocab, intent2idx, args.max_len)
     # TODO: crecate DataLoader for test dataset
 
-    embeddings = torch.load(args.cache_dir / "embeddings.pt")
-
-    model = SeqClassifier(
-        embeddings,
-        args.hidden_size,
-        args.num_layers,
-        args.dropout,
-        args.bidirectional,
-        dataset.num_classes,
-    )
+    model = torch.load(args.ckpt_path)
     model.eval()
 
-    ckpt = torch.load(args.ckpt_path)
     # load weights into model
 
     # TODO: predict dataset

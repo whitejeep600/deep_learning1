@@ -10,6 +10,7 @@ from torch.optim import SGD
 from torch.utils.data import DataLoader
 from tqdm import trange
 
+from constants import INTENT_SAVE_PATH
 from dataset import SeqClsDataset
 from model import SeqClassifier
 from utils import Vocab
@@ -19,32 +20,48 @@ DEV = "eval"
 SPLITS = [TRAIN, DEV]
 
 
-def train_iteration(model, data_loader, loss_function, optimizer):
-    model.train()
-    for i, batch in enumerate(data_loader):
-        sentences: IntTensor = batch['text']
-        intents: LongTensor = batch['intent']
-        predictions = model(sentences)['prediction']
-        current_loss = loss_function(predictions, intents)
-        optimizer.zero_grad()
-        current_loss.backward()
-        optimizer.step()
-        if i % 32 == 0:
-            print(f'loss:{current_loss.item()}\n')
+class IntentTrainer:
+    def __init__(self, model, train_loader, test_loader, loss_function, optimizer, save_path):
+        self.model = model
+        self.train_loader = train_loader
+        self.test_loader = test_loader
+        self.loss_function = loss_function
+        self.optimizer = optimizer
+        self.save_path = save_path
+        self.best_accuracy = 0
 
+    def train(self):
+        epoch_pbar = trange(args.num_epoch, desc="Epoch")
+        for _ in epoch_pbar:
+            self.train_iteration()
+            self.test_iteration()
 
-def test(model, data_loader):
-    # TODO: save model weights
-    all_samples_no = len(data_loader.dataset)
-    model.eval()
-    correct = 0
-    with torch.no_grad():
-        for batch in iter(data_loader):
-            sentences = batch['text']
-            intents = batch['intent']
-            predictions = model(sentences)['prediction']
-            correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == intents[i]])
-    print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
+    def train_iteration(self):
+        self.model.train()
+        for i, batch in enumerate(self.train_loader):
+            sentences: IntTensor = batch['text']
+            intents: LongTensor = batch['intent']
+            predictions = self.model(sentences)['prediction']
+            current_loss = self.loss_function(predictions, intents)
+            self.optimizer.zero_grad()
+            current_loss.backward()
+            self.optimizer.step()
+            if i % 32 == 0:
+                print(f'loss:{current_loss.item()}\n')
+
+    def test_iteration(self):
+        all_samples_no = len(self.test_loader.dataset)
+        self.model.eval()
+        correct = 0
+        with torch.no_grad():
+            for batch in iter(self.test_loader):
+                sentences = batch['text']
+                intents = batch['intent']
+                predictions = self.model(sentences)['prediction']
+                correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == intents[i]])
+        print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
+        if correct > self.best_accuracy:
+            torch.save(self.model, self.save_path)
 
 
 def main(args):
@@ -76,11 +93,8 @@ def main(args):
 
     loss_function = torch.nn.CrossEntropyLoss()
 
-    epoch_pbar = trange(args.num_epoch, desc="Epoch")
-    for epoch in epoch_pbar:
-        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer)
-        test(model, data_loaders[DEV])
-    # TODO: Inference on test set
+    trainer = IntentTrainer(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_path)
+    trainer.train()
 
 
 def parse_args() -> Namespace:
@@ -98,10 +112,10 @@ def parse_args() -> Namespace:
         default="./cache/intent/",
     )
     parser.add_argument(
-        "--ckpt_dir",
+        "--ckpt_path",
         type=Path,
-        help="Directory to save the model file.",
-        default="./ckpt/intent/",
+        help="Path to save the model file.",
+        default=INTENT_SAVE_PATH,
     )
 
     # data
