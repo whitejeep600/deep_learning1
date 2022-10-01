@@ -33,7 +33,7 @@ class SeqClsDataset(Dataset):
 
     def collate_fn(self, samples: List[Dict]) -> Dict:
         return {'text': torch.IntTensor(self.vocab.encode_batch([sample['text'].split(' ') for sample in samples])),
-                'intent': torch.LongTensor([self.label_mapping[sample['intent']] for sample in samples])}
+                'label': torch.LongTensor([self.label_mapping[sample['intent']] for sample in samples])}
 
     def label2idx(self, label: str):
         return self.label_mapping[label]
@@ -48,9 +48,9 @@ class SeqTaggingClsDataset(SeqClsDataset):
     def collate_fn(self, samples):
         tagged_sentences = [sample['tags'] for sample in samples]
         encoded_tags = [[self.label_mapping[tag] for tag in tagged_sentence] for tagged_sentence in tagged_sentences]
-        padded_tags = pad_to_len(encoded_tags, max([len(tag) for tag in encoded_tags]), 0)
+        padded_tags = pad_to_len(encoded_tags, max([len(tag) for tag in encoded_tags]), self.label_mapping["O"])
         return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
-                'tag': torch.LongTensor(padded_tags)}
+                'label': torch.LongTensor(padded_tags)}
 
 
 class SeqClsTestDataset(SeqClsDataset):

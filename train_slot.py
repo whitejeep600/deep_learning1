@@ -5,46 +5,17 @@ from pathlib import Path
 from typing import Dict
 
 import torch
-from torch import IntTensor
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-from tqdm import trange
 
 from dataset import SeqTaggingClsDataset
 from model import SeqTagger
+from trainers import SlotTrainer
 from utils import Vocab
 
 TRAIN = "train"
 DEV = "eval"
 SPLITS = [TRAIN, DEV]
-
-
-def train_iteration(model, data_loader, loss_function, optimizer):
-    model.train()
-    for i, batch in enumerate(data_loader):
-        sentences: IntTensor = batch['text']
-        tags = batch['tag']
-        predictions = torch.transpose(model(sentences)['prediction'], 1, 2)  # changing format for the loss function
-        current_loss = loss_function(predictions, tags)
-        optimizer.zero_grad()
-        current_loss.backward()
-        optimizer.step()
-        if i % 32 == 0:
-            print(f'loss:{current_loss.item()}\n')
-
-
-def test(model, data_loader):
-    all_samples_no = len(data_loader.dataset)
-    model.eval()
-    correct = 0
-    with torch.no_grad():
-        for batch in iter(data_loader):
-            sentences: IntTensor = batch['text']
-            tags = batch['tag']
-            predictions = model(sentences)['prediction']
-            correct += len([i for i in range(len(predictions)) if
-                            all([torch.argmax(predictions[i][j]) == tags[i][j] for j in range(len(predictions[i]))])])
-        print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
 
 
 def main(args):
@@ -74,10 +45,9 @@ def main(args):
 
     loss_function = torch.nn.CrossEntropyLoss()
 
-    epoch_pbar = trange(args.num_epoch, desc="Epoch")
-    for _ in epoch_pbar:
-        train_iteration(model, data_loaders[TRAIN], loss_function, optimizer)
-        test(model, data_loaders[DEV])
+    trainer = SlotTrainer(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_dir,
+                          args.num_epoch)
+    trainer.train()
 
 
 def parse_args() -> Namespace:
@@ -120,7 +90,7 @@ def parse_args() -> Namespace:
     parser.add_argument(
         "--device", type=torch.device, help="cpu, cuda, cuda:0, cuda:1", default="cpu"
     )
-    parser.add_argument("--num_epoch", type=int, default=100)
+    parser.add_argument("--num_epoch", type=int, default=50)
 
     args = parser.parse_args()
     return args

@@ -6,11 +6,9 @@ from typing import Dict
 
 import torch
 from torch.utils.data import DataLoader
-from tqdm import tqdm
 
 from constants import SLOT_DIRECTORY, BEST_FILENAME
-from dataset import SeqTaggingClsDataset, SeqTaggingClsTestDataset
-from model import SeqTagger
+from dataset import SeqTaggingClsTestDataset
 from utils import Vocab, tag_list_to_str
 
 
@@ -40,8 +38,8 @@ def main(args):
             tags = [[dataset.idx2label(tag_index)
                      for tag_index in sentence_tag_indices]
                     for sentence_tag_indices in tag_indices]
-            for id, tags, sentence in zip(ids, tags, sentences):
-                all_predictions[id] = {'tags': tags, 'len': len(sentence)}
+            for id, tags, item in zip(ids, tags, data):
+                all_predictions[id] = {'tags': tags, 'len': len(item['tokens'])}
 
     with open(args.pred_file, 'w') as pred_file:
         print('id,tags', file=pred_file)

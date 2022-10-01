@@ -5,63 +5,18 @@ from pathlib import Path
 from typing import Dict
 
 import torch
-from torch import IntTensor, LongTensor
 from torch.optim import SGD
 from torch.utils.data import DataLoader
-from tqdm import trange
 
-from constants import INTENT_DIRECTORY, BEST_FILENAME
+from constants import INTENT_DIRECTORY
 from dataset import SeqClsDataset
 from model import SeqClassifier
+from trainers import IntentTrainer
 from utils import Vocab
 
 TRAIN = "train"
 DEV = "eval"
 SPLITS = [TRAIN, DEV]
-
-
-class IntentTrainer:
-    def __init__(self, model, train_loader, test_loader, loss_function, optimizer, save_dir):
-        self.model = model
-        self.train_loader = train_loader
-        self.test_loader = test_loader
-        self.loss_function = loss_function
-        self.optimizer = optimizer
-        self.save_path = save_dir / BEST_FILENAME
-        self.best_accuracy = 0
-
-    def train(self):
-        epoch_pbar = trange(args.num_epoch, desc="Epoch")
-        for _ in epoch_pbar:
-            self.train_iteration()
-            self.test_iteration()
-
-    def train_iteration(self):
-        self.model.train()
-        for i, batch in enumerate(self.train_loader):
-            sentences: IntTensor = batch['text']
-            intents: LongTensor = batch['intent']
-            predictions = self.model(sentences)['prediction']
-            current_loss = self.loss_function(predictions, intents)
-            self.optimizer.zero_grad()
-            current_loss.backward()
-            self.optimizer.step()
-            if i % 32 == 0:
-                print(f'loss:{current_loss.item()}\n')
-
-    def test_iteration(self):
-        all_samples_no = len(self.test_loader.dataset)
-        self.model.eval()
-        correct = 0
-        with torch.no_grad():
-            for batch in iter(self.test_loader):
-                sentences = batch['text']
-                intents = batch['intent']
-                predictions = self.model(sentences)['prediction']
-                correct += len([i for i in range(len(predictions)) if torch.argmax(predictions[i]) == intents[i]])
-        print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
-        if correct > self.best_accuracy:
-            torch.save(self.model, self.save_path)
 
 
 def main(args):
@@ -93,7 +48,8 @@ def main(args):
 
     loss_function = torch.nn.CrossEntropyLoss()
 
-    trainer = IntentTrainer(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_path)
+    trainer = IntentTrainer(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_path,
+                            args.num_epoch)
     trainer.train()
 
 
