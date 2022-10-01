@@ -7,7 +7,7 @@ from typing import Dict
 import torch
 from torch.utils.data import DataLoader
 
-from constants import INTENT_DIRECTORY, BEST_FILENAME
+from constants import INTENT_CKPT_DIRECTORY, BEST_FILENAME
 from dataset import SeqClsTestDataset
 from utils import Vocab
 
@@ -61,7 +61,7 @@ def parse_args() -> Namespace:
         "--ckpt_dir",
         type=Path,
         help="Path to model checkpoint.",
-        default=INTENT_DIRECTORY,
+        default=INTENT_CKPT_DIRECTORY,
     )
     parser.add_argument("--pred_file", type=Path, default="pred.intent.csv")
 

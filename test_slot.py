@@ -7,7 +7,7 @@ from typing import Dict
 import torch
 from torch.utils.data import DataLoader
 
-from constants import SLOT_DIRECTORY, BEST_FILENAME
+from constants import SLOT_CKPT_DIRECTORY, BEST_FILENAME
 from dataset import SeqTaggingClsTestDataset
 from utils import Vocab, tag_list_to_str
 
@@ -71,7 +71,7 @@ def parse_args() -> Namespace:
         "--ckpt_dir",
         type=Path,
         help="Directory to save the model file.",
-        default=SLOT_DIRECTORY,
+        default=SLOT_CKPT_DIRECTORY,
     )
     parser.add_argument("--pred_file", type=Path, default="pred.slot.csv")
 

@@ -1,3 +1,4 @@
-INTENT_DIRECTORY = './ckpt/intent/'
+INTENT_CKPT_DIRECTORY = './ckpt/intent/'
+SLOT_CKPT_DIRECTORY = './ckpt/slot/'
+
 BEST_FILENAME = 'best.pth'
-SLOT_DIRECTORY = './ckpt/slot/'
