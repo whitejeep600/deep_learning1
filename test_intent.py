@@ -5,9 +5,10 @@ from pathlib import Path
 from typing import Dict
 
 import torch
+from torch.utils.data import DataLoader
 
-from dataset import SeqClsDataset
-from model import SeqClassifier
+from constants import INTENT_DIRECTORY, BEST_FILENAME
+from dataset import SeqClsTestDataset
 from utils import Vocab
 
 
@@ -19,17 +20,27 @@ def main(args):
     intent2idx: Dict[str, int] = json.loads(intent_idx_path.read_text())
 
     data = json.loads(args.test_file.read_text())
-    dataset = SeqClsDataset(data, vocab, intent2idx, args.max_len)
-    # TODO: crecate DataLoader for test dataset
+    dataset = SeqClsTestDataset(data, vocab, intent2idx, args.max_len)
+    data_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, collate_fn=dataset.collate_fn)
 
-    model = torch.load(args.ckpt_path)
+    model = torch.load(args.ckpt_dir / BEST_FILENAME)
     model.eval()
 
-    # load weights into model
+    all_predictions = {}
 
-    # TODO: predict dataset
-
-    # TODO: write prediction to file (args.pred_file)
+    with torch.no_grad():
+        for batch in iter(data_loader):
+            sentences = batch['text']
+            ids = batch['id']
+            predictions = model(sentences)['prediction']
+            intent_indexes = [torch.argmax(predictions[i]).item() for i in range(len(predictions))]
+            intents = [dataset.idx2label(intent_index) for intent_index in intent_indexes]
+            for id, intent in zip(ids, intents):
+                all_predictions[id] = intent
+    with open(args.pred_file, 'w') as pred_file:
+        print('id,intent', file=pred_file)
+        for id in all_predictions:
+            print(f'{id},{all_predictions[id]}', file=pred_file)
 
 
 def parse_args() -> Namespace:
@@ -38,7 +49,7 @@ def parse_args() -> Namespace:
         "--test_file",
         type=Path,
         help="Path to the test file.",
-        required=True
+        default="./data/intent/test.json",
     )
     parser.add_argument(
         "--cache_dir",
@@ -47,10 +58,10 @@ def parse_args() -> Namespace:
         default="./cache/intent/",
     )
     parser.add_argument(
-        "--ckpt_path",
+        "--ckpt_dir",
         type=Path,
         help="Path to model checkpoint.",
-        required=True
+        default=INTENT_DIRECTORY,
     )
     parser.add_argument("--pred_file", type=Path, default="pred.intent.csv")
 

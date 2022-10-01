@@ -10,7 +10,7 @@ from torch.optim import SGD
 from torch.utils.data import DataLoader
 from tqdm import trange
 
-from constants import INTENT_SAVE_PATH
+from constants import INTENT_DIRECTORY, BEST_FILENAME
 from dataset import SeqClsDataset
 from model import SeqClassifier
 from utils import Vocab
@@ -21,13 +21,13 @@ SPLITS = [TRAIN, DEV]
 
 
 class IntentTrainer:
-    def __init__(self, model, train_loader, test_loader, loss_function, optimizer, save_path):
+    def __init__(self, model, train_loader, test_loader, loss_function, optimizer, save_dir):
         self.model = model
         self.train_loader = train_loader
         self.test_loader = test_loader
         self.loss_function = loss_function
         self.optimizer = optimizer
-        self.save_path = save_path
+        self.save_path = save_dir / BEST_FILENAME
         self.best_accuracy = 0
 
     def train(self):
@@ -115,7 +115,7 @@ def parse_args() -> Namespace:
         "--ckpt_path",
         type=Path,
         help="Path to save the model file.",
-        default=INTENT_SAVE_PATH,
+        default=INTENT_DIRECTORY,
     )
 
     # data
@@ -145,5 +145,5 @@ def parse_args() -> Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
-    args.ckpt_dir.mkdir(parents=True, exist_ok=True)
+    args.ckpt_path.mkdir(parents=True, exist_ok=True)
     main(args)

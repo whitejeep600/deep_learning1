@@ -51,3 +51,15 @@ class SeqTaggingClsDataset(SeqClsDataset):
         padded_tags = pad_to_len(encoded_tags, max([len(tag) for tag in encoded_tags]), 0)
         return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
                 'tag': torch.LongTensor(padded_tags)}
+
+
+class SeqClsTestDataset(SeqClsDataset):
+    def collate_fn(self, samples: List[Dict]) -> Dict:
+        return {'text': torch.IntTensor(self.vocab.encode_batch([sample['text'].split(' ') for sample in samples])),
+                'id': [sample['id'] for sample in samples]}
+
+
+class SeqTaggingClsTestDataset(SeqTaggingClsDataset):
+    def collate_fn(self, samples):
+        return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
+                'id': [sample['id'] for sample in samples]}

@@ -46,3 +46,7 @@ def pad_to_len(seqs: List[List[int]], to_len: int, padding: int) -> List[List[in
 
 def max_index(li: List):
     return li.index(max(li))
+
+
+def tag_list_to_str(tags, length):
+    return ' '.join(tags[:length])

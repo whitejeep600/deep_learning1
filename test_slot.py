@@ -8,18 +8,55 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from dataset import SeqTaggingClsDataset
+from constants import SLOT_DIRECTORY, BEST_FILENAME
+from dataset import SeqTaggingClsDataset, SeqTaggingClsTestDataset
 from model import SeqTagger
-from utils import Vocab
+from utils import Vocab, tag_list_to_str
 
 
 def main(args):
-    # TODO: implement main function
-    raise NotImplementedError
+    with open(args.cache_dir / "vocab.pkl", "rb") as f:
+        vocab: Vocab = pickle.load(f)
+    tag_idx_path = args.cache_dir / "tag2idx.json"
+    tag2idx: Dict[str, int] = json.loads(tag_idx_path.read_text())
+
+    data = json.loads(args.test_file.read_text())
+    dataset = SeqTaggingClsTestDataset(data, vocab, tag2idx, args.max_len)
+    data_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, collate_fn=dataset.collate_fn)
+
+    model = torch.load(args.ckpt_dir / BEST_FILENAME)
+    model.eval()
+
+    all_predictions = {}
+
+    with torch.no_grad():
+        for batch in iter(data_loader):
+            sentences = batch['text']
+            ids = batch['id']
+            predictions = model(sentences)['prediction']
+            tag_indices = [[torch.argmax(predictions[i][j]).item()
+                            for j in range(len(predictions[i]))]
+                           for i in range(len(predictions))]
+            tags = [[dataset.idx2label(tag_index)
+                     for tag_index in sentence_tag_indices]
+                    for sentence_tag_indices in tag_indices]
+            for id, tags, sentence in zip(ids, tags, sentences):
+                all_predictions[id] = {'tags': tags, 'len': len(sentence)}
+
+    with open(args.pred_file, 'w') as pred_file:
+        print('id,tags', file=pred_file)
+        for id in all_predictions:
+            print(f'{id},{tag_list_to_str(all_predictions[id]["tags"], all_predictions[id]["len"])}', file=pred_file)
 
 
 def parse_args() -> Namespace:
     parser = ArgumentParser()
+    parser.add_argument(
+        "--test_file",
+        type=Path,
+        help="Path to the test file.",
+        default="./data/slot/test.json",
+    )
     parser.add_argument(
         "--data_dir",
         type=Path,
@@ -36,7 +73,7 @@ def parse_args() -> Namespace:
         "--ckpt_dir",
         type=Path,
         help="Directory to save the model file.",
-        default="./ckpt/slot/",
+        default=SLOT_DIRECTORY,
     )
     parser.add_argument("--pred_file", type=Path, default="pred.slot.csv")
 
