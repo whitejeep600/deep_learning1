@@ -1,5 +1,6 @@
 import torch
 from torch import IntTensor
+from torch.nn.utils import clip_grad_value_
 from tqdm import trange
 
 from constants import BEST_FILENAME
@@ -39,6 +40,7 @@ class Trainer:
             current_loss = self.loss_function(predictions, tags)
             self.optimizer.zero_grad()
             current_loss.backward()
+            clip_grad_value_(self.model.parameters(), 2)
             self.optimizer.step()
             if i % 32 == 0:
                 print(f'loss:{current_loss.item()}\n')

@@ -1,6 +1,7 @@
 import os
 from argparse import Namespace
 from pathlib import Path
+from timeit import default_timer
 
 from torch.optim import SGD
 
@@ -23,6 +24,7 @@ GRUS = [True, False]
 if __name__ == '__main__':
     best_filename = INTENT_CKPT_DIRECTORY + BEST_FILENAME
     best_best_filename = INTENT_CKPT_DIRECTORY + 'grid_search_best.pth'
+    best_accuracy = 0
     with open('intent_grid_search_output.txt', 'a') as output_file:
         print('Testing model parameters by grid search. Tried values:', file=output_file)
         print('max_len: ', MAX_LENS, file=output_file)
@@ -58,12 +60,19 @@ if __name__ == '__main__':
                                             print('Tested parameters:', file=output_file)
                                             print(args, file=output_file)
                                             args.ckpt_dir.mkdir(parents=True, exist_ok=True)
+                                            start = default_timer()
                                             acc, epoch = create_and_train(args,
                                                                           'intent2idx.json',
                                                                           SeqClsDataset,
                                                                           SeqClassifier,
                                                                           SGD,
                                                                           IntentTrainer)
-                                            print(f'Best accuracy of {acc} achieved for epoch nr {epoch}',
+                                            # ...
+                                            end = default_timer()
+                                            print(f'Best accuracy of {acc} achieved for epoch nr {epoch}. Total '
+                                                  f'running time: {end-start}',
                                                   file=output_file)
-                                            os.system('cp ' + best_filename + ' ' + best_best_filename)
+                                            if acc > best_accuracy:
+                                                os.system('cp ' + best_filename + ' ' + best_best_filename)
+                                                best_accuracy = acc
+        print('Finished the grid search', file=output_file)
