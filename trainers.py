@@ -15,12 +15,14 @@ class Trainer:
         self.save_path = save_dir / BEST_FILENAME
         self.num_epoch = num_epoch
         self.best_accuracy = 0
+        self.best_epoch = 0
 
     def train(self):
         epoch_pbar = trange(self.num_epoch, desc="Epoch")
-        for _ in epoch_pbar:
+        for epoch in epoch_pbar:
             self.train_iteration()
-            self.test_iteration()
+            self.test_iteration(epoch)
+        return self.best_accuracy, self.best_epoch
 
     def get_predictions(self, sentences):
         raise NotImplementedError
@@ -41,7 +43,7 @@ class Trainer:
             if i % 32 == 0:
                 print(f'loss:{current_loss.item()}\n')
 
-    def test_iteration(self):
+    def test_iteration(self, epoch):
         all_samples_no = len(self.test_loader.dataset)
         self.model.eval()
         correct = 0
@@ -55,6 +57,7 @@ class Trainer:
         if correct > self.best_accuracy:
             torch.save(self.model, self.save_path)
             self.best_accuracy = correct
+            self.best_epoch = epoch
 
 
 class IntentTrainer(Trainer):

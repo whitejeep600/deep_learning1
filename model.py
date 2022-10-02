@@ -1,23 +1,28 @@
 from typing import Dict
 
 import torch
-from torch.nn import Embedding, RNN, Linear
+from torch.nn import Embedding, RNN, Linear, GRU
 
 
 class SeqClassifier(torch.nn.Module):
     def __init__(
-        self,
-        embeddings: torch.tensor,
-        hidden_size: int,
-        num_layers: int,
-        dropout: float,
-        bidirectional: bool,
-        num_class: int,
+            self,
+            embeddings: torch.tensor,
+            hidden_size: int,
+            num_layers: int,
+            dropout: float,
+            bidirectional: bool,
+            num_class: int,
+            gru: bool,
     ) -> None:
         super(SeqClassifier, self).__init__()
         self.embed = Embedding.from_pretrained(embeddings, freeze=False)
-        self.rnn = RNN(input_size=embeddings.size(dim=1), hidden_size=hidden_size, num_layers=num_layers,
-                       dropout=dropout, bidirectional=bidirectional, batch_first=True)
+        if gru:
+            model_class = GRU
+        else:
+            model_class = RNN
+        self.rnn = model_class(input_size=embeddings.size(dim=1), hidden_size=hidden_size, num_layers=num_layers,
+                               dropout=dropout, bidirectional=bidirectional, batch_first=True)
         self.num_class = num_class
         dimension_multiplier = 2 if bidirectional else 1
         self.final_linear = Linear(hidden_size * dimension_multiplier, num_class)

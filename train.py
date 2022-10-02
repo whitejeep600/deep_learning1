@@ -38,12 +38,12 @@ def create_and_train(args, label_to_index_name, dataset_lass, model_class, optim
     optimizer = optimizer_class(model.parameters(), lr=args.lr)
     loss_function = torch.nn.CrossEntropyLoss()
     trainer = trainer_class(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_dir,
-                            args.num_epoch)
-    trainer.train()
+                            args.num_epoch, args.gru)
+    return trainer.train()
 
 
 def parse_train_args(data_dir, cache_dir, ckpt_dir, max_len, hidden_size, num_layers, dropout, bidirectional, lr,
-                     batch_size, num_epoch) -> Namespace:
+                     batch_size, num_epoch, gru) -> Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "--data_dir",
@@ -80,6 +80,8 @@ def parse_train_args(data_dir, cache_dir, ckpt_dir, max_len, hidden_size, num_la
     parser.add_argument("--batch_size", type=int, default=batch_size)
 
     parser.add_argument("--num_epoch", type=int, default=num_epoch)
+
+    parser.add_argument("--gru", type=bool, default=gru)
 
     args = parser.parse_args()
     return args
