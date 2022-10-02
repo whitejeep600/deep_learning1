@@ -6,4 +6,5 @@ glove.840B.300d.zip
 cache/
 pred.intent.csv
 pred.slot.csv
-
+train_intent.sh
+train_slot.sh
