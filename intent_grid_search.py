@@ -44,7 +44,7 @@ if __name__ == '__main__':
                                     for num_epochs in NUMS_EPOCHS:
                                         for gru in GRUS:
                                             args = Namespace(data_dir=Path('/tmp2/r11922182/data/intent'),
-                                                             cache_dir=Path('/tmp2/r11922182/data/cache'),
+                                                             cache_dir=Path('/tmp2/r11922182/cache/intent'),
                                                              ckpt_dir=Path(INTENT_CKPT_DIRECTORY),
                                                              max_len=max_len,
                                                              hidden_size=hidden_size,
