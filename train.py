@@ -36,7 +36,7 @@ def create_and_train(args, label_to_index_name, dataset_lass, model_class, train
     model_no_device = model_class(embeddings, args.hidden_size, args.num_layers, args.dropout,
                                   args.bidirectional, num_class, args.gru)
     model = model_no_device.to(target_device)
-    optimizer = SGD(model.parameters(), lr=args.lr, momentum=0.9)
+    optimizer = SGD(model.parameters(), lr=args.lr)
     loss_function = torch.nn.CrossEntropyLoss()
     trainer = trainer_class(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_dir,
                             args.num_epoch)

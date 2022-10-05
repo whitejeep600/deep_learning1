@@ -3,8 +3,6 @@ from argparse import Namespace
 from pathlib import Path
 from timeit import default_timer
 
-from torch.optim import SGD
-
 from constants import INTENT_CKPT_DIRECTORY, BEST_FILENAME
 from dataset import SeqClsDataset
 from model import SeqClassifier
@@ -18,7 +16,7 @@ DROPOUTS = [0.1]
 BIDIRECTIONALS = [True]
 LRS = [5e-2, 1e-1, 3e-1]
 BATCH_SIZES = [16]
-NUMS_EPOCHS = [180]
+NUMS_EPOCHS = [100]
 GRUS = [True]
 
 if __name__ == '__main__':

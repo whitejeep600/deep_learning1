@@ -57,6 +57,10 @@ class IntentTester(Tester):
 
 
 class SlotTester(Tester):
+    def __init__(self, label_idx_path, dataset_class, max_len, batch_size, cache_dir, test_file, ckpt_dir, pred_file):
+        super().__init__(label_idx_path, dataset_class, max_len, batch_size, cache_dir, test_file, ckpt_dir, pred_file)
+        self.id_to_length = {item['id']: len(item['tokens']) for item in self.dataset.data}
+
     def update_predictions(self, ids, new_predictions):
         tag_indices = [[torch.argmax(new_predictions[i][j]).item()
                         for j in range(len(new_predictions[i]))]
@@ -64,8 +68,8 @@ class SlotTester(Tester):
         tags = [[self.dataset.idx2label(tag_index)
                  for tag_index in sentence_tag_indices]
                 for sentence_tag_indices in tag_indices]
-        for id, tags, item in zip(ids, tags, self.data):
-            self.all_predictions[id] = {'tags': tags, 'len': len(item['tokens'])}
+        for id, tags in zip(ids, tags):
+            self.all_predictions[id] = {'tags': tags, 'len': self.id_to_length[id]}
 
     def dump_to_file(self):
         with open(self.pred_file, 'w') as pred_file:
