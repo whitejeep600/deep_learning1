@@ -12,19 +12,20 @@ from train import create_and_train
 from trainers import IntentTrainer
 
 MAX_LENS = [128]
-HIDDEN_SIZES = [128, 256]
-NUMS_LAYERS = [2, 3]
+HIDDEN_SIZES = [128]
+NUMS_LAYERS = [2]
 DROPOUTS = [0.1]
 BIDIRECTIONALS = [True]
-LRS = [1e-3, 1e-2, 1e-1]
-BATCH_SIZES = [16, 32]
-NUMS_EPOCHS = [150]
-GRUS = [True, False]
+LRS = [5e-2, 1e-1, 3e-1]
+BATCH_SIZES = [16]
+NUMS_EPOCHS = [180]
+GRUS = [True]
 
 if __name__ == '__main__':
     best_filename = INTENT_CKPT_DIRECTORY + BEST_FILENAME
     best_best_filename = INTENT_CKPT_DIRECTORY + 'grid_search_best.pth'
     best_accuracy = 0
+    tested_models_no = 0
     with open('intent_grid_search_output.txt', 'a') as output_file:
         print('Testing model parameters by grid search. Tried values:', file=output_file)
         print('max_len: ', MAX_LENS, file=output_file)
@@ -58,6 +59,8 @@ if __name__ == '__main__':
                                                              num_epoch=num_epochs,
                                                              gru=gru)
                                             print('Tested parameters:', file=output_file)
+                                            print(f'Testing model no. {tested_models_no}')
+                                            tested_models_no += 1
                                             print(args, file=output_file)
                                             args.ckpt_dir.mkdir(parents=True, exist_ok=True)
                                             start = default_timer()
@@ -65,7 +68,6 @@ if __name__ == '__main__':
                                                                           'intent2idx.json',
                                                                           SeqClsDataset,
                                                                           SeqClassifier,
-                                                                          SGD,
                                                                           IntentTrainer)
                                             # ...
                                             end = default_timer()

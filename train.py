@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict
 
 import torch
+from torch.optim import SGD
 from torch.utils.data import DataLoader
 
 from utils import Vocab
@@ -14,7 +15,7 @@ DEV = "eval"
 SPLITS = [TRAIN, DEV]
 
 
-def create_and_train(args, label_to_index_name, dataset_lass, model_class, optimizer_class, trainer_class):
+def create_and_train(args, label_to_index_name, dataset_lass, model_class, trainer_class):
     with open(args.cache_dir / "vocab.pkl", "rb") as f:
         vocab: Vocab = pickle.load(f)
     label_to_index_path = args.cache_dir / label_to_index_name
@@ -35,7 +36,7 @@ def create_and_train(args, label_to_index_name, dataset_lass, model_class, optim
     model_no_device = model_class(embeddings, args.hidden_size, args.num_layers, args.dropout,
                                   args.bidirectional, num_class, args.gru)
     model = model_no_device.to(target_device)
-    optimizer = optimizer_class(model.parameters(), lr=args.lr)
+    optimizer = SGD(model.parameters(), lr=args.lr, momentum=0.9)
     loss_function = torch.nn.CrossEntropyLoss()
     trainer = trainer_class(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_dir,
                             args.num_epoch)

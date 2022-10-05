@@ -17,12 +17,16 @@ class Trainer:
         self.num_epoch = num_epoch
         self.best_accuracy = 0
         self.best_epoch = 0
+        self.epoch_losses = []
 
     def train(self):
         epoch_pbar = trange(self.num_epoch, desc="Epoch")
         for epoch in epoch_pbar:
             self.train_iteration()
             self.test_iteration(epoch)
+            if epoch == self.num_epoch / 3:
+                self.optimizer['lr'] /= 10
+        print(f'Best obtained accuracy: {self.best_accuracy} for epoch {self.best_epoch}\n')
         return self.best_accuracy, self.best_epoch
 
     def get_predictions(self, sentences):
@@ -38,9 +42,10 @@ class Trainer:
             tags = batch['label']
             predictions = self.get_predictions(sentences)
             current_loss = self.loss_function(predictions, tags)
+            self.epoch_losses.append(current_loss.item())
             self.optimizer.zero_grad()
             current_loss.backward()
-            clip_grad_value_(self.model.parameters(), 1)
+            clip_grad_value_(self.model.parameters(), 0.5)
             self.optimizer.step()
             if i % 32 == 0:
                 print(f'loss:{current_loss.item()}\n')
@@ -55,7 +60,9 @@ class Trainer:
                 labels = batch['label']
                 predictions = self.model(sentences)['prediction']
                 correct += self.get_number_of_correct(predictions, labels)
+        print(f'Average loss this epoch: {sum(self.epoch_losses) / len(self.epoch_losses)}\n')
         print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
+        self.epoch_losses = []
         if correct > self.best_accuracy:
             torch.save(self.model, self.save_path)
             self.best_accuracy = correct
