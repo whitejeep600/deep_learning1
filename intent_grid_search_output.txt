@@ -1,0 +1,155 @@
+Testing model parameters by grid search. Tried values:
+max_len:  [128]
+Hidden size:  [128, 256]
+NUmber of layers:  [2, 3]
+Dropout:  [0.1]
+Using bidirectionality (true/false):  [True]
+Learning rate:  [0.001, 0.01, 0.1]
+Batch size:  [16, 32]
+Number of epochs:  [150]
+Using GRU (true/false):  [True, False]
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 862 achieved for epoch nr 149. Total running time: 5088.364763933001
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 1103 achieved for epoch nr 146. Total running time: 2398.1468644868582
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 105 achieved for epoch nr 149. Total running time: 3367.8930449190084
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 323 achieved for epoch nr 147. Total running time: 1534.834498747019
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2629 achieved for epoch nr 107. Total running time: 4720.18854382704
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 2389 achieved for epoch nr 147. Total running time: 2284.9671927290037
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2559 achieved for epoch nr 139. Total running time: 3436.7421396439895
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 2068 achieved for epoch nr 141. Total running time: 1561.1323286572006
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2719 achieved for epoch nr 93. Total running time: 4297.362880469067
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 280 achieved for epoch nr 23. Total running time: 2179.7263884251006
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2676 achieved for epoch nr 65. Total running time: 3096.087265465874
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 139 achieved for epoch nr 93. Total running time: 1468.8889686821494
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 665 achieved for epoch nr 148. Total running time: 6085.179551012116
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 1340 achieved for epoch nr 146. Total running time: 2885.9483791410457
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 106 achieved for epoch nr 147. Total running time: 4433.0709705790505
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 181 achieved for epoch nr 149. Total running time: 1975.266921228962
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2601 achieved for epoch nr 146. Total running time: 6097.8864834129345
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 2507 achieved for epoch nr 148. Total running time: 2824.6657212118153
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2480 achieved for epoch nr 134. Total running time: 4567.909657496028
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 2408 achieved for epoch nr 138. Total running time: 1950.9378218092024
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2684 achieved for epoch nr 127. Total running time: 5972.665134066017
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 453 achieved for epoch nr 39. Total running time: 2754.6739042080007
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2639 achieved for epoch nr 142. Total running time: 4380.531798704062
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 287 achieved for epoch nr 82. Total running time: 1921.7620519620832
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 921 achieved for epoch nr 149. Total running time: 8506.891246106941
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 1817 achieved for epoch nr 147. Total running time: 3943.461962221889
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 121 achieved for epoch nr 147. Total running time: 7653.632887655171
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 518 achieved for epoch nr 143. Total running time: 2933.0815573290456
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2626 achieved for epoch nr 144. Total running time: 9403.068340669153
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 2542 achieved for epoch nr 143. Total running time: 4085.3041187440977
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2552 achieved for epoch nr 131. Total running time: 7365.707046411
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 2497 achieved for epoch nr 141. Total running time: 2710.478122080909
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2731 achieved for epoch nr 52. Total running time: 8423.926582492888
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 213 achieved for epoch nr 60. Total running time: 3636.98199852393
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2678 achieved for epoch nr 143. Total running time: 6678.831238165032
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 60 achieved for epoch nr 149. Total running time: 2635.2896299210843
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 1004 achieved for epoch nr 148. Total running time: 12601.605798186036
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 2042 achieved for epoch nr 143. Total running time: 5074.811093009077
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 144 achieved for epoch nr 149. Total running time: 9727.154061357025
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.001, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 650 achieved for epoch nr 149. Total running time: 3721.707882151939
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2619 achieved for epoch nr 144. Total running time: 12344.358089591144
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 2561 achieved for epoch nr 138. Total running time: 8152.784798386041
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2534 achieved for epoch nr 130. Total running time: 14708.746408820152
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 2480 achieved for epoch nr 143. Total running time: 5694.866749032168
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=True)
+Best accuracy of 2715 achieved for epoch nr 58. Total running time: 16601.369129989063
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=150, gru=False)
+Best accuracy of 712 achieved for epoch nr 32. Total running time: 6424.591880342923
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=True)
+Best accuracy of 2676 achieved for epoch nr 145. Total running time: 9677.589972830145
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/intent'), cache_dir=PosixPath('/tmp2/r11922182/cache/intent'), ckpt_dir=PosixPath('ckpt/intent'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=32, num_epoch=150, gru=False)
+Best accuracy of 1287 achieved for epoch nr 63. Total running time: 3739.5659205908887
+Finished the grid search

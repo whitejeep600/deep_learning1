@@ -40,7 +40,7 @@ class Trainer:
             current_loss = self.loss_function(predictions, tags)
             self.optimizer.zero_grad()
             current_loss.backward()
-            clip_grad_value_(self.model.parameters(), 2)
+            clip_grad_value_(self.model.parameters(), 1)
             self.optimizer.step()
             if i % 32 == 0:
                 print(f'loss:{current_loss.item()}\n')
