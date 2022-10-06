@@ -24,7 +24,7 @@ class Trainer:
         for epoch in epoch_pbar:
             self.train_iteration()
             self.test_iteration(epoch)
-            if epoch == self.num_epoch / 3:
+            if epoch == self.num_epoch * 2 / 3:
                 self.optimizer.param_groups[0]['lr'] /= 10
         print(f'Best obtained accuracy: {self.best_accuracy} for epoch {self.best_epoch}\n')
         return self.best_accuracy, self.best_epoch

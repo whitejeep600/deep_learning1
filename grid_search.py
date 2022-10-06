@@ -10,13 +10,13 @@ from train import create_and_train
 from trainers import IntentTrainer, SlotTrainer
 
 MAX_LENS = [128]
-HIDDEN_SIZES = [128, 256]
-NUMS_LAYERS = [2]
+HIDDEN_SIZES = [256, 128]
+NUMS_LAYERS = [3, 2]
 DROPOUTS = [0.1]
 BIDIRECTIONALS = [True]
 LRS = [1e-2, 4e-2, 1e-1]
 BATCH_SIZES = [16]
-NUMS_EPOCHS = [100]
+NUMS_EPOCHS = [130]
 GRUS = [True]
 
 

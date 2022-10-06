@@ -1,0 +1,47 @@
+Testing model parameters by grid search. Tried values:
+max_len:  [128]
+Hidden size:  [256, 128]
+NUmber of layers:  [3, 2]
+Dropout:  [0.1]
+Using bidirectionality (true/false):  [True]
+Learning rate:  [0.01, 0.04, 0.1]
+Batch size:  [16]
+Number of epochs:  [130]
+Using GRU (true/false):  [True]
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 717 achieved for epoch nr 120. Total running time: 5708.682934771059
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.04, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 770 achieved for epoch nr 107. Total running time: 5671.46505210991
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=256, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 781 achieved for epoch nr 124. Total running time: 5581.807795624016
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 706 achieved for epoch nr 127. Total running time: 3694.5135535961017
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.04, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 766 achieved for epoch nr 103. Total running time: 3696.3021677779034
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=256, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 785 achieved for epoch nr 120. Total running time: 3671.3999693370424
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 721 achieved for epoch nr 122. Total running time: 2825.129245725926
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.04, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 766 achieved for epoch nr 116. Total running time: 2758.657561445143
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=128, num_layers=3, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 782 achieved for epoch nr 106. Total running time: 2784.637415665202
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.01, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 717 achieved for epoch nr 129. Total running time: 1909.3167220703326
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.04, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 766 achieved for epoch nr 125. Total running time: 1945.845911216922
+Tested parameters:
+Namespace(data_dir=PosixPath('/tmp2/r11922182/data/slot'), cache_dir=PosixPath('/tmp2/r11922182/cache/slot'), ckpt_dir=PosixPath('ckpt/slot'), max_len=128, hidden_size=128, num_layers=2, dropout=0.1, bidirectional=True, lr=0.1, batch_size=16, num_epoch=130, gru=True)
+Best accuracy of 786 achieved for epoch nr 109. Total running time: 1958.7196772811003
+Finished the grid search
