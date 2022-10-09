@@ -40,7 +40,13 @@ def create_and_train(args, label_to_index_name, dataset_lass, model_class, train
     loss_function = torch.nn.CrossEntropyLoss()
     trainer = trainer_class(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_dir,
                             args.num_epoch)
-    return trainer.train()
+    best_accuracy, best_epoch = trainer.train()
+    train_losses = trainer.all_epochs_average_train_losses
+    validation_losses = trainer.all_epochs_average_validation_losses
+    with open("intent_losses.txt", 'a') as output_file:
+        print(f'{train_losses}\n',  file=output_file)
+        print(f'{validation_losses}\n',  file=output_file)
+    return best_accuracy, best_epoch
 
 
 def parse_train_args(data_dir, cache_dir, ckpt_dir, max_len, hidden_size, num_layers, dropout, bidirectional, lr,
