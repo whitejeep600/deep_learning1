@@ -16,4 +16,4 @@ if __name__ == "__main__":
                             num_epoch=100,
                             gru=True)
     args.ckpt_dir.mkdir(parents=True, exist_ok=True)
-    create_and_train(args, "intent2idx.json", SeqClsDataset, SeqClassifier, IntentTrainer)
+    create_and_train(args, "intent2idx.json")

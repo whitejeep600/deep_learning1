@@ -4,10 +4,7 @@ from pathlib import Path
 from timeit import default_timer
 
 from constants import INTENT_CKPT_DIRECTORY, BEST_FILENAME, SLOT_CKPT_DIRECTORY
-from dataset import SeqClsDataset, SeqTaggingClsDataset
-from model import SeqClassifier, SeqTagger
 from train import create_and_train
-from trainers import IntentTrainer, SlotTrainer
 
 MAX_LENS = [128]
 HIDDEN_SIZES = [256, 128]
@@ -20,23 +17,19 @@ NUMS_EPOCHS = [130]
 GRUS = [True]
 
 
-def grid_search(intent=True):
-    if intent:
-        ckpt_directory = INTENT_CKPT_DIRECTORY
-        output_file_name = 'intent_grid_search_output.txt'
-        model_type = 'intent'
-        label_to_index_name = 'intent2idx.json'
-        dataset_lass = SeqClsDataset
-        model_class = SeqClassifier
-        trainer_class = IntentTrainer
-    else:
+# a common function for running grid searches for hyperparameter
+# testing, for both intent classifiers and slot taggers.
+def grid_search(slot=False):
+    if slot:
         ckpt_directory = SLOT_CKPT_DIRECTORY
         output_file_name = 'slot_grid_search_output.txt'
         model_type = 'slot'
         label_to_index_name = 'tag2idx.json'
-        dataset_lass = SeqTaggingClsDataset
-        model_class = SeqTagger
-        trainer_class = SlotTrainer
+    else:
+        ckpt_directory = INTENT_CKPT_DIRECTORY
+        output_file_name = 'intent_grid_search_output.txt'
+        model_type = 'intent'
+        label_to_index_name = 'intent2idx.json'
     best_filename = ckpt_directory + BEST_FILENAME
     best_best_filename = ckpt_directory + 'grid_search_best.pth'
     best_accuracy = 0
@@ -81,9 +74,7 @@ def grid_search(intent=True):
                                             start = default_timer()
                                             acc, epoch = create_and_train(args,
                                                                           label_to_index_name,
-                                                                          dataset_lass,
-                                                                          model_class,
-                                                                          trainer_class)
+                                                                          slot)
                                             end = default_timer()
                                             print(f'Best accuracy of {acc} achieved for epoch nr {epoch}. Total '
                                                   f'running time: {end-start}',
@@ -95,4 +86,4 @@ def grid_search(intent=True):
 
 
 if __name__ == '__main__':
-    grid_search(intent=False)
+    grid_search()

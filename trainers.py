@@ -6,6 +6,7 @@ from tqdm import trange
 from constants import BEST_FILENAME
 
 
+# a common Trainer class for IntentTrainer and SlotTrainer.
 class Trainer:
     def __init__(self, model, train_loader, test_loader, loss_function, optimizer, save_dir, num_epoch):
         self.model = model
@@ -92,7 +93,7 @@ class SlotTrainer(Trainer):
 
     def get_predictions(self, sentences):
         return torch.transpose(self.model(sentences)['prediction'], 1, 2)
-        # changing the format to what the loss function expects
+        # changing the format to what the loss function expects.
 
     def get_number_of_correct(self, predictions, tags):
         return len([i for i in range(len(predictions)) if

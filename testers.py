@@ -9,6 +9,7 @@ from constants import BEST_FILENAME
 from utils import Vocab, tag_list_to_str
 
 
+# A common base class for IntentTester and SlotTester.
 class Tester:
     def __init__(self, label_idx_path, dataset_class, max_len, batch_size, cache_dir, test_file, ckpt_dir, pred_file):
         self.label_idx_path = label_idx_path
@@ -24,6 +25,7 @@ class Tester:
         self.model.eval()
         self.pred_file = pred_file
         self.all_predictions = {}
+        # a dictionary storing all predictions for test set, so that they can all be dumped to .csv at the same time.
 
     def update_predictions(self, ids, new_predictions):
         pass

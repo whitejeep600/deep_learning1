@@ -16,4 +16,4 @@ if __name__ == "__main__":
                             num_epoch=100,
                             gru=True)
     args.ckpt_dir.mkdir(parents=True, exist_ok=True)
-    create_and_train(args, "tag2idx.json", SeqTaggingClsDataset, SeqTagger, SlotTrainer)
+    create_and_train(args, "tag2idx.json", slot=True)

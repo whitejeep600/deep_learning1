@@ -8,6 +8,9 @@ import torch
 from torch.optim import SGD
 from torch.utils.data import DataLoader
 
+from dataset import SeqTaggingClsDataset, SeqClsDataset
+from model import SeqTagger, SeqClassifier
+from trainers import SlotTrainer, IntentTrainer
 from utils import Vocab
 
 TRAIN = "train"
@@ -15,7 +18,17 @@ DEV = "eval"
 SPLITS = [TRAIN, DEV]
 
 
-def create_and_train(args, label_to_index_name, dataset_lass, model_class, trainer_class):
+# a common function for creating and running SlotTrainers and IntentTrainers. The 'slot' argument determines
+# whether a SlotTagger or IntentClassifier should be created and trained.
+def create_and_train(args, label_to_index_name, slot=False):
+    if slot:
+        dataset_lass = SeqTaggingClsDataset
+        model_class = SeqTagger
+        trainer_class = SlotTrainer
+    else:
+        dataset_lass = SeqClsDataset
+        model_class = SeqClassifier
+        trainer_class = IntentTrainer
     with open(args.cache_dir / "vocab.pkl", "rb") as f:
         vocab: Vocab = pickle.load(f)
     label_to_index_path = args.cache_dir / label_to_index_name
@@ -41,14 +54,18 @@ def create_and_train(args, label_to_index_name, dataset_lass, model_class, train
     trainer = trainer_class(model, data_loaders[TRAIN], data_loaders[DEV], loss_function, optimizer, args.ckpt_dir,
                             args.num_epoch)
     best_accuracy, best_epoch = trainer.train()
-    train_losses = trainer.all_epochs_average_train_losses
-    validation_losses = trainer.all_epochs_average_validation_losses
-    with open("intent_losses.txt", 'a') as output_file:
-        print(f'{train_losses}\n',  file=output_file)
-        print(f'{validation_losses}\n',  file=output_file)
+    # I only used the code below once, to dump train and validation losses for every epoch to a file and use them
+    # to create plots for the report afterwards.
+    # train_losses = trainer.all_epochs_average_train_losses
+    # validation_losses = trainer.all_epochs_average_validation_losses
+    # with open("intent_losses.txt", 'a') as output_file:
+    #     print(f'{train_losses}\n',  file=output_file)
+    #     print(f'{validation_losses}\n',  file=output_file)
     return best_accuracy, best_epoch
 
 
+# an argument parser with default values, making it easy to train with desired
+# parameters without using the console to pass them.
 def parse_train_args(data_dir, cache_dir, ckpt_dir, max_len, hidden_size, num_layers, dropout, bidirectional, lr,
                      batch_size, num_epoch, gru) -> Namespace:
     parser = ArgumentParser()
