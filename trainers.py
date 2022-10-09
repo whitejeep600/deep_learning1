@@ -62,7 +62,7 @@ class Trainer:
             for batch in iter(self.test_loader):
                 sentences = batch['text']
                 labels = batch['label']
-                predictions = self.model(sentences)['prediction']
+                predictions = self.get_predictions(sentences)
                 correct += self.get_number_of_correct(predictions, labels)
                 current_loss = self.loss_function(predictions, labels)
                 batch_losses.append(current_loss.item())
@@ -96,6 +96,7 @@ class SlotTrainer(Trainer):
         # changing the format to what the loss function expects.
 
     def get_number_of_correct(self, predictions, tags):
+        predictions = torch.transpose(predictions, 1, 2)
         return len([i for i in range(len(predictions)) if
                     all([torch.argmax(predictions[i][j]) == tags[i][j] for j in
                          range(len(predictions[i]))])])
