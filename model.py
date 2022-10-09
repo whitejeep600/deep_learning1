@@ -34,7 +34,7 @@ class SeqClassifier(torch.nn.Module):
     def forward(self, batch) -> Dict[str, torch.Tensor]:
         embedded_batch = self.embed(batch)
         output, _ = self.rnn(embedded_batch)
-        output_for_last_tokens = output[:, -1, :]  # taking only the output for the last token
+        output_for_last_tokens = output[:, -1, :]
         after_linear = self.final_linear(output_for_last_tokens)
         return {'prediction': after_linear}
 

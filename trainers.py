@@ -17,7 +17,9 @@ class Trainer:
         self.num_epoch = num_epoch
         self.best_accuracy = 0
         self.best_epoch = 0
-        self.epoch_losses = []
+        self.current_epoch_losses = []
+        self.all_epochs_average_train_losses = []
+        self.all_epochs_average_validation_losses = []
 
     def train(self):
         epoch_pbar = trange(self.num_epoch, desc="Epoch")
@@ -39,10 +41,10 @@ class Trainer:
         self.model.train()
         for i, batch in enumerate(self.train_loader):
             sentences: IntTensor = batch['text']
-            tags = batch['label']
+            labels = batch['label']
             predictions = self.get_predictions(sentences)
-            current_loss = self.loss_function(predictions, tags)
-            self.epoch_losses.append(current_loss.item())
+            current_loss = self.loss_function(predictions, labels)
+            self.current_epoch_losses.append(current_loss.item())
             self.optimizer.zero_grad()
             current_loss.backward()
             clip_grad_value_(self.model.parameters(), 0.5)
@@ -54,15 +56,23 @@ class Trainer:
         all_samples_no = len(self.test_loader.dataset)
         self.model.eval()
         correct = 0
+        batch_losses = []
         with torch.no_grad():
             for batch in iter(self.test_loader):
                 sentences = batch['text']
                 labels = batch['label']
                 predictions = self.model(sentences)['prediction']
                 correct += self.get_number_of_correct(predictions, labels)
-        print(f'Average loss this epoch: {sum(self.epoch_losses) / len(self.epoch_losses)}\n')
+                current_loss = self.loss_function(predictions, labels)
+                batch_losses.append(current_loss.item())
+        train_loss_this_epoch = sum(self.current_epoch_losses) / len(self.current_epoch_losses)
+        validation_loss_this_epoch = sum(batch_losses) / len(batch_losses)
+        self.all_epochs_average_train_losses.append(train_loss_this_epoch)
+        self.all_epochs_average_validation_losses.append(validation_loss_this_epoch)
+        print(f'Average train loss this epoch: {train_loss_this_epoch}\n')
+        print(f'Average validation loss this epoch: {validation_loss_this_epoch}\n')
         print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
-        self.epoch_losses = []
+        self.current_epoch_losses = []
         if correct > self.best_accuracy:
             torch.save(self.model, self.save_path)
             self.best_accuracy = correct
@@ -82,7 +92,7 @@ class SlotTrainer(Trainer):
 
     def get_predictions(self, sentences):
         return torch.transpose(self.model(sentences)['prediction'], 1, 2)
-        # changing format to what the loss function expects
+        # changing the format to what the loss function expects
 
     def get_number_of_correct(self, predictions, tags):
         return len([i for i in range(len(predictions)) if
