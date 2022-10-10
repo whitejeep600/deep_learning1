@@ -16,11 +16,12 @@ class SlotEvaluator:
     def __init__(self):
         self.all_predictions = {}
         self.ground_truth = {}
-        self.label_idx_path = Path("./cache/slot/tag2idx.json")
+        reference_dir = '/tmp2/r11922182'
+        self.label_idx_path = Path(reference_dir + "/cache/slot/tag2idx.json")
         label2idx: Dict[str, int] = json.loads(self.label_idx_path.read_text())
-        with open(Path("./cache/slot/") / "vocab.pkl", "rb") as f:
+        with open(Path(reference_dir + "/cache/slot/") / "vocab.pkl", "rb") as f:
             vocab: Vocab = pickle.load(f)
-        self.data = json.loads(Path("./data/slot/eval.json").read_text())
+        self.data = json.loads(Path(reference_dir + "/data/slot/eval.json").read_text())
         self.dataset = SeqEvalDataset(self.data, vocab, label2idx, 128)
         self.data_loader = DataLoader(self.dataset, batch_size=16, shuffle=False,
                                       collate_fn=self.dataset.collate_fn)
@@ -47,7 +48,7 @@ class SlotEvaluator:
                 self.update_predictions(ids, predictions, labels)
         predictions = [self.all_predictions[key] for key in self.all_predictions]
         truth = [self.ground_truth[key] for key in self.ground_truth]
-        print(classification_report(truth, predictions, scheme=IOB2, mode=’strict’))
+        print(classification_report(truth, predictions, scheme=IOB2, mode='strict'))
 
 
 if __name__ == "__main__":
