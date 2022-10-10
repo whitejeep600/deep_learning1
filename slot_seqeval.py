@@ -5,10 +5,11 @@ from typing import Dict
 
 import torch
 from seqeval.metrics import classification_report
-from seqeval.scheme import IOB2
+#from seqeval.scheme import IOB2
 from torch.utils.data import DataLoader
 
 from dataset import SeqEvalDataset
+from model import SeqTagger
 from utils import Vocab
 
 
@@ -16,16 +17,20 @@ class SlotEvaluator:
     def __init__(self):
         self.all_predictions = {}
         self.ground_truth = {}
-        reference_dir = '/tmp2/r11922182'
+        reference_dir = '.'
         self.label_idx_path = Path(reference_dir + "/cache/slot/tag2idx.json")
         label2idx: Dict[str, int] = json.loads(self.label_idx_path.read_text())
         with open(Path(reference_dir + "/cache/slot/") / "vocab.pkl", "rb") as f:
             vocab: Vocab = pickle.load(f)
+        num_class = len(label2idx)
         self.data = json.loads(Path(reference_dir + "/data/slot/eval.json").read_text())
         self.dataset = SeqEvalDataset(self.data, vocab, label2idx, 128)
         self.data_loader = DataLoader(self.dataset, batch_size=16, shuffle=False,
                                       collate_fn=self.dataset.collate_fn)
-        self.model = torch.load("./ckpt/slot/best.pth")
+        embeddings = torch.load("./cache/slot/embeddings.pt")
+        self.model = SeqTagger(embeddings, 128, 2, 0.1, True, num_class, True)
+        self.model.eval()
+        self.model.load_state_dict(torch.load("./ckpt/slot/best.pth"))
 
     def update_predictions(self, ids, new_predictions, labels):
         tag_indices = [[torch.argmax(new_predictions[i][j]).item()
