@@ -59,8 +59,8 @@ def create_and_train(args, label_to_index_name, slot=False):
     # train_losses = trainer.all_epochs_average_train_losses
     # validation_losses = trainer.all_epochs_average_validation_losses
     # with open("intent_losses.txt", 'a') as output_file:
-    #     print(f'{train_losses}\n',  file=output_file)
-    #     print(f'{validation_losses}\n',  file=output_file)
+    #    print(f'{train_losses}\n',  file=output_file)
+    #    print(f'{validation_losses}\n',  file=output_file)
     return best_accuracy, best_epoch
 
 
