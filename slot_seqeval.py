@@ -5,7 +5,7 @@ from typing import Dict
 
 import torch
 from seqeval.metrics import classification_report
-#from seqeval.scheme import IOB2
+from seqeval.scheme import IOB2
 from torch.utils.data import DataLoader
 
 from dataset import SeqEvalDataset
@@ -17,7 +17,7 @@ class SlotEvaluator:
     def __init__(self):
         self.all_predictions = {}
         self.ground_truth = {}
-        reference_dir = '.'
+        reference_dir = '/tmp2/r11922182/'
         self.label_idx_path = Path(reference_dir + "/cache/slot/tag2idx.json")
         label2idx: Dict[str, int] = json.loads(self.label_idx_path.read_text())
         with open(Path(reference_dir + "/cache/slot/") / "vocab.pkl", "rb") as f:
@@ -27,7 +27,7 @@ class SlotEvaluator:
         self.dataset = SeqEvalDataset(self.data, vocab, label2idx, 128)
         self.data_loader = DataLoader(self.dataset, batch_size=16, shuffle=False,
                                       collate_fn=self.dataset.collate_fn)
-        embeddings = torch.load("./cache/slot/embeddings.pt")
+        embeddings = torch.load(reference_dir + "/cache/slot/embeddings.pt")
         self.model = SeqTagger(embeddings, 128, 2, 0.1, True, num_class, True)
         self.model.eval()
         self.model.load_state_dict(torch.load("./ckpt/slot/best.pth"))
@@ -53,7 +53,8 @@ class SlotEvaluator:
                 self.update_predictions(ids, predictions, labels)
         predictions = [self.all_predictions[key] for key in self.all_predictions]
         truth = [self.ground_truth[key] for key in self.ground_truth]
-        print(classification_report(truth, predictions, scheme=IOB2, mode='strict'))
+        with open('sequeval_output.txt', 'a') as file:
+	        print(classification_report(truth, predictions, scheme=IOB2, mode='strict'), file=file)
 
 
 if __name__ == "__main__":

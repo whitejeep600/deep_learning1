@@ -1,0 +1,12 @@
+              precision    recall  f1-score   support
+
+        date       0.76      0.74      0.75       206
+  first_name       0.94      0.86      0.90       102
+   last_name       0.81      0.67      0.73        78
+      people       0.75      0.74      0.75       238
+        time       0.85      0.84      0.85       218
+
+   micro avg       0.80      0.77      0.79       842
+   macro avg       0.82      0.77      0.79       842
+weighted avg       0.81      0.77      0.79       842
+
