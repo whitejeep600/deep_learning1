@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from constants import BEST_FILENAME
+from model import SeqTagger, SeqClassifier
 from utils import Vocab, tag_list_to_str
 
 
@@ -21,11 +22,14 @@ class Tester:
         self.dataset = self.dataset_class(self.data, vocab, label2idx, max_len)
         self.data_loader = DataLoader(self.dataset, batch_size=batch_size, shuffle=False,
                                       collate_fn=self.dataset.collate_fn)
-        self.model = torch.load(ckpt_dir / BEST_FILENAME)
-        self.model.eval()
+        num_class = len(json.loads(label_idx_path.read_text()))
+        self.model = self.get_model(ckpt_dir, cache_dir, num_class)
         self.pred_file = pred_file
         self.all_predictions = {}
         # a dictionary storing all predictions for test set, so that they can all be dumped to .csv at the same time.
+
+    def get_model(self, ckpt_dir, cache_dir, num_class):
+        raise NotImplementedError
 
     def update_predictions(self, ids, new_predictions):
         pass
@@ -45,6 +49,13 @@ class Tester:
 
 class IntentTester(Tester):
 
+    def get_model(self, ckpt_dir, cache_dir, num_class):
+        embeddings = torch.load(cache_dir / "embeddings.pt")
+        model = SeqClassifier(embeddings, 128, 2, 0.1, True, num_class, True)
+        model.eval()
+        model.load_state_dict(torch.load(ckpt_dir / BEST_FILENAME))
+        return model
+
     def update_predictions(self, ids, new_predictions):
         intent_indices = [torch.argmax(new_predictions[i]).item() for i in range(len(new_predictions))]
         intents = [self.dataset.idx2label(intent_index) for intent_index in intent_indices]
@@ -62,6 +73,13 @@ class SlotTester(Tester):
     def __init__(self, label_idx_path, dataset_class, max_len, batch_size, cache_dir, test_file, ckpt_dir, pred_file):
         super().__init__(label_idx_path, dataset_class, max_len, batch_size, cache_dir, test_file, ckpt_dir, pred_file)
         self.id_to_length = {item['id']: len(item['tokens']) for item in self.dataset.data}
+
+    def get_model(self, ckpt_dir, cache_dir, num_class):
+        embeddings = torch.load(cache_dir / "embeddings.pt")
+        model = SeqTagger(embeddings, 128, 2, 0.1, True, num_class, True)
+        model.eval()
+        model.load_state_dict(torch.load(ckpt_dir / BEST_FILENAME))
+        return model
 
     def update_predictions(self, ids, new_predictions):
         tag_indices = [[torch.argmax(new_predictions[i][j]).item()

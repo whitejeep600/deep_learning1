@@ -75,7 +75,7 @@ class Trainer:
         print(f'correct: {correct} out of {all_samples_no}. Epoch ended\n')
         self.current_epoch_losses = []
         if correct > self.best_accuracy:
-            torch.save(self.model, self.save_path)
+            torch.save(self.model.state_dict(), self.save_path)
             self.best_accuracy = correct
             self.best_epoch = epoch
 
