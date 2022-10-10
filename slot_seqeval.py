@@ -54,7 +54,7 @@ class SlotEvaluator:
         predictions = [self.all_predictions[key] for key in self.all_predictions]
         truth = [self.ground_truth[key] for key in self.ground_truth]
         with open('sequeval_output.txt', 'a') as file:
-	        print(classification_report(truth, predictions, scheme=IOB2, mode='strict'), file=file)
+            print(classification_report(truth, predictions, scheme=IOB2, mode='strict'), file=file)
 
 
 if __name__ == "__main__":
