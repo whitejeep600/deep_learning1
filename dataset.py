@@ -63,3 +63,11 @@ class SeqTaggingClsTestDataset(SeqTaggingClsDataset):
     def collate_fn(self, samples):
         return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
                 'id': [sample['id'] for sample in samples]}
+
+
+class SeqEvalDataset(SeqTaggingClsDataset):
+    def collate_fn(self, samples):
+        tagged_sentences = [sample['tags'] for sample in samples]
+        return {'text': torch.IntTensor(self.vocab.encode_batch([sample['tokens'] for sample in samples])),
+                'label': tagged_sentences,
+                'id': [sample['id'] for sample in samples]}
